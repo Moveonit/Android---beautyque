@@ -6,7 +6,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
 
 import moveonit.beautyque.response.ProvaResponse;
 import moveonit.beautyque.rest.ApiClient;
@@ -15,33 +16,42 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by DANIELE on 09/11/2016.
+ */
+
+public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setContentView(R.layout.login_activity);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
         setSupportActionBar(toolbar);
 
-        final TextView text = (TextView) findViewById(R.id.textMain);
+        Button btn_login = (Button) findViewById(R.id.btn_login);
 
-        ApiInterface apiService =
-                ApiClient.getClient().create(ApiInterface.class);
+        btn_login.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
 
-        Call<ProvaResponse> call = apiService.getProva();
-        call.enqueue(new Callback<ProvaResponse>() {
-            @Override
-            public void onResponse(Call<ProvaResponse>call, Response<ProvaResponse> response) {
-                String prova = response.body().getProva();
-                text.setText(prova);
-                Log.d("Test", "Number of movies received: " + prova);
-            }
+                ApiInterface apiService =
+                        ApiClient.getClient().create(ApiInterface.class);
+                Call<ProvaResponse> call = apiService.getProva();
+                call.enqueue(new Callback<ProvaResponse>() {
+                    @Override
+                    public void onResponse(Call<ProvaResponse>call, Response<ProvaResponse> response) {
+                        String prova = response.body().getProva();
 
-            @Override
-            public void onFailure(Call<ProvaResponse>call, Throwable t) {
-                // Log error here since request failed
-                //Log.e(TAG, t.toString());
+                        //Log.d("Test", "Number of movies received: " + prova);
+                    }
+
+                    @Override
+                    public void onFailure(Call<ProvaResponse>call, Throwable t) {
+                        // Log error here since request failed
+                        //Log.e(TAG, t.toString());
+                    }
+                });
             }
         });
     }
@@ -67,5 +77,4 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 }
