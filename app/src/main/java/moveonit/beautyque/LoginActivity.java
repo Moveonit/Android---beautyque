@@ -1,15 +1,21 @@
 package moveonit.beautyque;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import moveonit.beautyque.response.ProvaResponse;
+import java.util.Objects;
+
+import moveonit.beautyque.Utils.SharedValue;
+import moveonit.beautyque.model.Login;
+import moveonit.beautyque.response.TokenResponse;
+import moveonit.beautyque.response.UserResponse;
 import moveonit.beautyque.rest.ApiClient;
 import moveonit.beautyque.rest.ApiInterface;
 import retrofit2.Call;
@@ -25,56 +31,94 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
-        setSupportActionBar(toolbar);
 
-        Button btn_login = (Button) findViewById(R.id.btn_login);
+        final ApiInterface apiService =
+                ApiClient.getClient().create(ApiInterface.class);
+        String token = SharedValue.getSharedPreferences(getApplicationContext(), "token");
+        if (!Objects.equals(token, "")) {
+            Call<UserResponse> call = apiService.getMe("Bearer " + token, "V1");
+            call.enqueue(new Callback<UserResponse>() {
+                @Override
+                public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                    if (response.isSuccessful()) {
+                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        btn_login.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
+                        getApplicationContext().startActivity(i);
+                        finishAffinity();
+                        //Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Handle other responses
+                        Toast.makeText(getApplicationContext(), response.message(), Toast.LENGTH_SHORT).show();
+                    }
+                }
 
-                ApiInterface apiService =
+                @Override
+                public void onFailure(Call<UserResponse> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+
+            setContentView(R.layout.login_activity);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
+            setSupportActionBar(toolbar);
+
+
+            final EditText email = (EditText) findViewById(R.id.email);
+            final EditText password = (EditText) findViewById(R.id.password);
+
+            Button btn_login = (Button) findViewById(R.id.btn_login);
+
+            btn_login.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    // Perform action on click
+
+                    Call<TokenResponse> call = apiService.getToken(new Login(email.getText().toString(), password.getText().toString()));
+                    call.enqueue(new Callback<TokenResponse>() {
+                        @Override
+                        public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+                            if (response.isSuccessful()) {
+                                Log.d("Login", response.message());
+                                SharedValue.setSharedPreferences(getApplicationContext(), "token", response.body().getToken());
+                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                                getApplicationContext().startActivity(i);
+                                finishAffinity();
+                                //Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Handle other responses
+                                Toast.makeText(getApplicationContext(), response.message(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<TokenResponse> call, Throwable t) {
+                            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            });
+        }
+    }
+}
+
+    /*ApiInterface apiService =
                         ApiClient.getClient().create(ApiInterface.class);
-                Call<ProvaResponse> call = apiService.getProva();
-                call.enqueue(new Callback<ProvaResponse>() {
+                Call<UserResponse> call = apiService.getUsers();
+                call.enqueue(new Callback<UserResponse>() {
                     @Override
-                    public void onResponse(Call<ProvaResponse>call, Response<ProvaResponse> response) {
-                        String prova = response.body().getProva();
-
-                        //Log.d("Test", "Number of movies received: " + prova);
+                    public void onResponse(Call<UserResponse>call, Response<UserResponse> response) {
+                        //String prova = response.body().getEmail();
+                        List<User> users = response.body().getResults();
+                        //Log.d("Test", "Number of movies received: " + users);
                     }
 
                     @Override
-                    public void onFailure(Call<ProvaResponse>call, Throwable t) {
+                    public void onFailure(Call<UserResponse>call, Throwable t) {
                         // Log error here since request failed
                         //Log.e(TAG, t.toString());
                     }
-                });
-            }
-        });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-}
+                });*/

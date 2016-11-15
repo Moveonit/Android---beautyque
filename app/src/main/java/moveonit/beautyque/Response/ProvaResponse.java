@@ -13,15 +13,9 @@ import moveonit.beautyque.model.Prova;
 public class ProvaResponse {
     @SerializedName("prova")
     private String prova;
-    @SerializedName("results")
-    private List<Prova> results;
 
     public String getProva() {
         return prova;
-    }
-
-    public List<Prova> getResults(){
-        return results;
     }
 
     public void setProva(String prova) {

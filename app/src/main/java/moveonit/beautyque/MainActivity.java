@@ -1,5 +1,6 @@
 package moveonit.beautyque;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import moveonit.beautyque.Utils.SharedValue;
 import moveonit.beautyque.response.ProvaResponse;
 import moveonit.beautyque.rest.ApiClient;
 import moveonit.beautyque.rest.ApiInterface;
@@ -64,8 +66,15 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.logout_settings) {
+            SharedValue.setSharedPreferences(getApplicationContext(),"token","");
+            Intent i = new Intent(getApplicationContext(),LoginActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            getApplicationContext().startActivity(i);
+            finishAffinity();
+        }
 
         return super.onOptionsItemSelected(item);
     }
-
 }
