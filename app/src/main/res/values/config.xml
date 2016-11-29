@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="apiURL">http://192.168.1.201/</string>
+    <string name="apiURL" translatable="false">http://192.168.1.201/</string>
 </resources>

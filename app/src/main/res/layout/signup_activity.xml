@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
 
-    tools:context="moveonit.beautyque.LoginActivity">
+    tools:context="moveonit.beautyque.SignupActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -17,6 +17,6 @@
     </android.support.design.widget.AppBarLayout>
 
     <include
-        layout="@layout/login_fragment" />
+        layout="@layout/signup_fragment" />
 
 </android.support.design.widget.CoordinatorLayout>

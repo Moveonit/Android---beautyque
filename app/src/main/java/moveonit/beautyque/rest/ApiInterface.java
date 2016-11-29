@@ -1,6 +1,7 @@
 package moveonit.beautyque.rest;
 
 import moveonit.beautyque.model.Login;
+import moveonit.beautyque.model.SignupUser;
 import moveonit.beautyque.response.ProvaResponse;
 import moveonit.beautyque.response.TokenResponse;
 import moveonit.beautyque.response.UserResponse;
@@ -24,15 +25,23 @@ public interface ApiInterface {
     Call<UserResponse> getUser(@Path("id") int id);
 
     @GET("users")
-    Call<UserResponse> getUsers();
+    Call<UserResponse> getUsers(@Header("Authorization") String auth,
+                                @Header("X-Api-Version") String version);
 
     @GET("me")
     Call<UserResponse> getMe(@Header("Authorization") String auth,
                              @Header("X-Api-Version") String version);
 
+    @GET("refresh")
+    Call<TokenResponse> refreshToken(@Header("Authorization") String auth,
+                                     @Header("X-Api-Version") String version);
+
     @POST("login")
     Call<TokenResponse> getToken(@Body Login login);
 
-    /*@GET("movie/{id}")
-    Call<ProvaResponse> getMovieDetails(@Path("id") int id, @Query("api_key") String apiKey);*/
+    @POST("signup")
+    Call<TokenResponse>  signup(@Body SignupUser newUser);
+
+    @GET("checkemail/{email}")
+    Call<TokenResponse> checkEmail(@Path("email") String email);
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Beautyque</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="logout">Esci</string>
+    <string name="no_account_yet_create_one">Non hai ancora un account? Creane uno</string>
+    <string name="password">Password</string>
+    <string name="sign_up">Registrati</string>
+    <string name="create_account">Crea account</string>
+    <string name="AlreadyMemberLogin">Hai già un account? Entra</string>
+    <string name="emailValidation">inserire una email valida</string>
+    <string name="name">Nome</string>
+    <string name="passwordValidation">almeno 3 caratteri alfanumerici</string>
+    <string name="nameValidation">almeno 3 caratteri</string>
+    <string name="Creating_account">Creazione account...</string>
+    <string name="emailExist">Email già registrata</string>
+</resources>
