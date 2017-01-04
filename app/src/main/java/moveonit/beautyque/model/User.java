@@ -9,16 +9,17 @@ import com.google.gson.annotations.SerializedName;
 public class User {
     @SerializedName("id")
     private int id;
-    @SerializedName("name")
-    private String name;
     @SerializedName("email")
     private String email;
+    @SerializedName("type")
+    private String type;
+    @SerializedName("Guest")
+    private Guest guest;
+    @SerializedName("Spa")
+    private Spa spa;
+    @SerializedName("Employee")
+    private Employee employee;
 
-    public User(String email, int id, String name) {
-        this.email = email;
-        this.id = id;
-        this.name = name;
-    }
 
     public String getEmail() {
         return email;
@@ -26,6 +27,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getId() {
@@ -36,11 +45,25 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Guest getGuest() {
+        return guest;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGuest(Guest guest) {
+        this.guest = guest;
+    }
+    public Spa getSpa() {
+        return spa;
+    }
+
+    public void setSpa(Spa spa) {
+        this.spa = spa;
+    }
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }

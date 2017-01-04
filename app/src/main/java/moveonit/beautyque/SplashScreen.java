@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
 
 import moveonit.beautyque.Utils.ErrorHandler;
 import moveonit.beautyque.Utils.SharedValue;
@@ -32,7 +33,6 @@ public class SplashScreen extends Activity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-
         final ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -42,41 +42,20 @@ public class SplashScreen extends Activity {
             call.enqueue(new Callback<UserResponse>() {
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                    if (response.isSuccessful()) {
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    response = ApiClient.getResponse(getApplicationContext(),response,call);
 
-                        getApplicationContext().startActivity(i);
-                        finishAffinity();
-                        return;
-                        //Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
-                    } else {
-                        // Handle other responses
-                        try {
-                            setContentView(R.layout.splashscreen);
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                            JSONObject jObjError = new JSONObject(response.errorBody().string());
-                            ErrorHandler.errorHandle(getApplicationContext(), response.code(), jObjError.getString("error"), MainActivity.class);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    /* Create an Intent that will start the Menu-Activity. */
-                                    Intent mainIntent = new Intent(SplashScreen.this, LoginActivity.class);
-                                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    SplashScreen.this.startActivity(mainIntent);
-                                    SplashScreen.this.finish();
-                                }
-                            }, SPLASH_DISPLAY_LENGTH);
-                            // Toast.makeText(getApplicationContext(), jObjError.getString("error"), Toast.LENGTH_SHORT).show();
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    getApplicationContext().startActivity(i);
+                    finishAffinity();
+                    return;
+                    //Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onFailure(Call<UserResponse> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                    ApiClient.getFailure(getApplicationContext(),t);
                 }
             });
         } else {

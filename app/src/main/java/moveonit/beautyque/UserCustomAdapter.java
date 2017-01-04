@@ -34,7 +34,7 @@ public class UserCustomAdapter extends ArrayAdapter<User> implements Filterable 
         TextView nome = (TextView)convertView.findViewById(R.id.textViewName);
         TextView email = (TextView)convertView.findViewById(R.id.textViewEmail);
         User c = getItem(position);
-        nome.setText(c.getName());
+        nome.setText(c.getType());
         email.setText(c.getEmail());
         return convertView;
     }
@@ -65,8 +65,8 @@ public class UserCustomAdapter extends ArrayAdapter<User> implements Filterable 
 
                 for (int i = 0; i < count; i++) {
                     final User User = list.get(i);
-                    final String value = User.getName().toLowerCase();
-
+                    //final String value = User.getName().toLowerCase();
+                    final String value = "";
                     if (value.contains(prefix)) {
                         nlist.add(User);
                     }

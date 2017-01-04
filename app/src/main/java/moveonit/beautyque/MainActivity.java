@@ -25,7 +25,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    UserCustomAdapter adapter;
+    //UserCustomAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -35,33 +35,25 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        final ListView lista = (ListView) findViewById(R.id.users_list);
-
-
+        //final ListView lista = (ListView) findViewById(R.id.users_list);
+        final TextView textView = (TextView) findViewById(R.id.textView2);
 
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
         String token = SharedValue.getSharedPreferences(getApplicationContext(), "token");
 
-        Call<UserResponse> call = apiService.getUsers("Bearer " + token, "V1");
+        Call<UserResponse> call = apiService.getMe("Bearer " + token, "V1");
         call.enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse>call, Response<UserResponse> response) {
-                if (response.isSuccessful()) {
-                    List<User> utenti = response.body().getResults();
-                    adapter = new UserCustomAdapter(getApplicationContext(), R.layout.rowcustom, utenti);
-                    lista.setAdapter(adapter);
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), response.message(), Toast.LENGTH_SHORT).show();
-                }
+                response = ApiClient.getResponse(getApplicationContext(),response,call);
+                textView.setText(response.body().getUser().get(0).getType());
             }
 
             @Override
             public void onFailure(Call<UserResponse>call, Throwable t) {
-                // Log error here since request failed
-                //Log.e(TAG, t.toString());
+                ApiClient.getFailure(getApplicationContext(),t);
             }
         });
     }

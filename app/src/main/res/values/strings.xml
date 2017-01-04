@@ -17,4 +17,5 @@
     <string name="emailExist">Email already registered</string>
     <string name="facebook_app_id" translatable="false">170662183378783</string>
     <string name="LoginFailed">Login failed</string>
+    <string name="loginProgressDialog">Login. Please wait...</string>
 </resources>

@@ -1,16 +1,19 @@
 package moveonit.beautyque.Utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.NetworkOnMainThreadException;
+import android.os.StrictMode;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.Objects;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
+import moveonit.beautyque.LoginActivity;
+import moveonit.beautyque.response.RefreshResponse;
 import moveonit.beautyque.response.TokenResponse;
 import moveonit.beautyque.rest.ApiClient;
 import moveonit.beautyque.rest.ApiInterface;
@@ -27,16 +30,66 @@ public class ErrorHandler {
     final static ApiInterface apiService =
             ApiClient.getClient().create(ApiInterface.class);
 
-    public static boolean errorHandle(final Context context, int Code, String ErrorMessage,final Class nextActivity) {
+    public static BlockingQueue<Response> errorHandle(final Context context, int Code, String ErrorMessage, final Call mainCall) {
+        final BlockingQueue<Response> blockingQueue = new ArrayBlockingQueue<>(1);
         switch (Code) {
             case 401:
                 if(Objects.equals(ErrorMessage, "token_expired")) {
                     String token = SharedValue.getSharedPreferences(context, "token");
                     if (!Objects.equals(token, "")) {
-                        Call<TokenResponse> call = apiService.refreshToken("Bearer " + token, "V1");
-                        call.enqueue(new Callback<TokenResponse>() {
+                        Call<RefreshResponse> call = apiService.refreshToken("Bearer " + token, "V1");
+                        try{
+                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                            StrictMode.setThreadPolicy(policy);
+                            RefreshResponse resp = call.execute().body();
+                            if(resp != null){
+                                SharedValue.setSharedPreferences(context, "token", resp.getToken());
+                                Call newCall = mainCall.clone();
+                                try {
+                                    blockingQueue.add(newCall.execute());
+                                } catch (IOException ex) {
+                                    callBackLogin(context);
+                                }
+                            }else
+                            {
+                                callBackLogin(context);
+                            }
+                        }catch (IOException ex)
+                        {
+                            callBackLogin(context);
+                        }catch(NetworkOnMainThreadException ex)
+                        {
+                            callBackLogin(context);
+                        }
+                    }
+                }
+                break;
+            default:
+                callBackLogin(context);
+                break;
+        }
+        return blockingQueue;
+    }
+
+
+    public static void callBackLogin(Context context){
+        SharedValue.setSharedPreferences(context, "token", "");
+        SharedValue.setSharedPreferences(context, "user", "");
+        SharedValue.setSharedPreferences(context, "type", "");
+        Intent i = new Intent(context, LoginActivity.class);
+
+        context.startActivity(i);
+    }
+    /*public static Response errorHandle(final Context context, int Code, String ErrorMessage,final Class nextActivity) {
+        switch (Code) {
+            case 401:
+                if(Objects.equals(ErrorMessage, "token_expired")) {
+                    String token = SharedValue.getSharedPreferences(context, "token");
+                    if (!Objects.equals(token, "")) {
+                        Call<RefreshResponse> call = apiService.refreshToken("Bearer " + token, "V1");
+                        call.enqueue(new Callback<RefreshResponse>() {
                             @Override
-                            public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+                            public void onResponse(Call<RefreshResponse> call, Response<RefreshResponse> response) {
                                 if (response.isSuccessful()) {
                                     SharedValue.setSharedPreferences(context,"token",response.body().getToken());
                                     Toast.makeText(context, "refreshed", Toast.LENGTH_SHORT).show();
@@ -60,7 +113,7 @@ public class ErrorHandler {
                             }
 
                             @Override
-                            public void onFailure(Call<TokenResponse> call, Throwable t) {
+                            public void onFailure(Call<RefreshResponse> call, Throwable t) {
                                 Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -69,5 +122,5 @@ public class ErrorHandler {
             break;
         }
         return false;
-    }
+    }*/
 }

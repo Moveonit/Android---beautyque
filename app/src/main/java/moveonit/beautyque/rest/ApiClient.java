@@ -1,24 +1,21 @@
 package moveonit.beautyque.rest;
 
-import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
 
-import moveonit.beautyque.MainActivity;
+import moveonit.beautyque.LoginActivity;
 import moveonit.beautyque.Utils.ErrorHandler;
-import moveonit.beautyque.Utils.SharedValue;
-import moveonit.beautyque.response.UserResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -44,5 +41,32 @@ public class ApiClient {
                     .build();
         }
         return retrofit;
+    }
+
+    public static Response getResponse(Context context, Response response, Call call)
+    {
+        if (!response.isSuccessful()){
+            try {
+                JSONObject jObjError = new JSONObject(response.errorBody().string());
+                BlockingQueue<Response> result = ErrorHandler.errorHandle(context, response.code(), jObjError.getString("error"), call);
+                try{
+                    response = result.take();
+                }catch (InterruptedException ex) {
+
+                }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return response;
+    }
+
+    public static void getFailure(Context context,Throwable t)
+    {
+        Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+        if(context instanceof  LoginActivity)
+        {
+            ErrorHandler.callBackLogin(context);
+        }
     }
 }
