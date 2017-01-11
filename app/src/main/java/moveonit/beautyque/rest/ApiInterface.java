@@ -4,6 +4,7 @@ import moveonit.beautyque.model.Login;
 import moveonit.beautyque.model.SignupUser;
 import moveonit.beautyque.response.ProvaResponse;
 import moveonit.beautyque.response.RefreshResponse;
+import moveonit.beautyque.response.SpasResponse;
 import moveonit.beautyque.response.TokenResponse;
 import moveonit.beautyque.response.UserResponse;
 import retrofit2.Call;
@@ -26,6 +27,10 @@ public interface ApiInterface {
 
     @GET("users")
     Call<UserResponse> getUsers(@Header("Authorization") String auth,
+                                @Header("X-Api-Version") String version);
+
+    @GET("spas")
+    Call<SpasResponse> getSpas(@Header("Authorization") String auth,
                                 @Header("X-Api-Version") String version);
 
     @GET("me")

@@ -20,6 +20,18 @@ public class User {
     @SerializedName("Employee")
     private Employee employee;
 
+    public Object getUserable(){
+        switch (type) {
+            case "Employee":
+                return getEmployee();
+            case "Spa":
+                return getSpa();
+            case "Guest":
+                return getGuest();
+            default:
+                return null;
+        }
+    }
 
     public String getEmail() {
         return email;

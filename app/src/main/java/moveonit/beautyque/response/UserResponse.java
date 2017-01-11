@@ -13,11 +13,11 @@ import moveonit.beautyque.model.User;
 public class UserResponse {
 
     @SerializedName("data")
-    private List<User> user;
+    private List<User> data;
 
-    public List<User> getUser() { return user; }
+    public List<User> getData() { return data; }
 
-    public void setUser(List<User> user) { this.user = user; }
+    public void setData(List<User> data) { this.data = data; }
 
 
 }

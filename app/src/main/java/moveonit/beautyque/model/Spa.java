@@ -29,6 +29,12 @@ public class Spa {
     @SerializedName("zip_code")
     @Expose
     private String zipCode;
+    @SerializedName("latitude")
+    @Expose
+    private float latitude;
+    @SerializedName("longitude")
+    @Expose
+    private float longitude;
     @SerializedName("fax")
     @Expose
     private Object fax;
@@ -149,4 +155,27 @@ public class Spa {
         this.province = province;
     }
 
+    public float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getvATNumber() {
+        return vATNumber;
+    }
+
+    public void setvATNumber(String vATNumber) {
+        this.vATNumber = vATNumber;
+    }
 }

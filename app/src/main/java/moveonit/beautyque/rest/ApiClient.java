@@ -3,6 +3,7 @@ package moveonit.beautyque.rest;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.res.Resources;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
 import moveonit.beautyque.LoginActivity;
+import moveonit.beautyque.R;
 import moveonit.beautyque.Utils.ErrorHandler;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -25,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ApiClient {
-    private static final String BASE_URL = "http://192.168.1.201/";
+    private static final String BASE_URL = "http://office.moveonit.it/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient() {
@@ -48,14 +50,20 @@ public class ApiClient {
         if (!response.isSuccessful()){
             try {
                 JSONObject jObjError = new JSONObject(response.errorBody().string());
-                BlockingQueue<Response> result = ErrorHandler.errorHandle(context, response.code(), jObjError.getString("error"), call);
-                try{
-                    response = result.take();
-                }catch (InterruptedException ex) {
-
+                if(jObjError.getString("error") == "token_expired") {
+                    BlockingQueue<Response> result = ErrorHandler.errorHandle(context, response.code(), jObjError.getString("error"), call);
+                    try {
+                        response = result.take();
+                        return null;
+                    } catch (InterruptedException ex) {
+                        ErrorHandler.callBackLogin(context);
+                    }
+                }else{
+                    ErrorHandler.callBackLogin(context);
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
+                ErrorHandler.callBackLogin(context);
             }
         }
         return response;
@@ -64,9 +72,14 @@ public class ApiClient {
     public static void getFailure(Context context,Throwable t)
     {
         Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+
         if(context instanceof  LoginActivity)
         {
+            Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+        }else
+        {
             ErrorHandler.callBackLogin(context);
+
         }
     }
 }

@@ -4,15 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
-import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
 
 import moveonit.beautyque.Utils.ErrorHandler;
 import moveonit.beautyque.Utils.SharedValue;
@@ -42,8 +34,7 @@ public class SplashScreen extends Activity {
             call.enqueue(new Callback<UserResponse>() {
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                    response = ApiClient.getResponse(getApplicationContext(),response,call);
-
+                    ApiClient.getResponse(getApplicationContext(),response,call);
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 

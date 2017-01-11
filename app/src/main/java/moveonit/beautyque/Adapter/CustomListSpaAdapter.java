@@ -1,4 +1,4 @@
-package moveonit.beautyque;
+package moveonit.beautyque.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,30 +12,31 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import moveonit.beautyque.model.User;
+import moveonit.beautyque.R;
+import moveonit.beautyque.model.Spa;
 
-public class UserCustomAdapter extends ArrayAdapter<User> implements Filterable {
-    private ArrayList<User> original;
-    private ArrayList<User> fitems;
+public class CustomListSpaAdapter extends ArrayAdapter<Spa> implements Filterable {
+    private ArrayList<Spa> original;
+    private ArrayList<Spa> fitems;
     private Filter filter;
 
-    public UserCustomAdapter(Context context, int textViewResourceId, List<User> objects) {
+    public CustomListSpaAdapter(Context context, int textViewResourceId, List<Spa> objects) {
         super(context, textViewResourceId, objects);
-        this.original = new ArrayList<User>(objects);
-        this.fitems = new ArrayList<User>(objects);
-        this.filter = new clientFilter();
+        this.original = new ArrayList<Spa>(objects);
+        this.fitems = new ArrayList<Spa>(objects);
+        this.filter = new spaFilter();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.employeesrowcustom, null);
+        convertView = inflater.inflate(R.layout.custom_row_list_spas, null);
         TextView nome = (TextView)convertView.findViewById(R.id.textViewName);
-        TextView email = (TextView)convertView.findViewById(R.id.textViewEmail);
-        User c = getItem(position);
-        nome.setText(c.getType());
-        email.setText(c.getEmail());
+        TextView numero = (TextView)convertView.findViewById(R.id.textViewCity);
+        Spa c = getItem(position);
+        nome.setText(c.getCompanyName());
+        numero.setText(c.getAddress());
         return convertView;
     }
 
@@ -43,32 +44,32 @@ public class UserCustomAdapter extends ArrayAdapter<User> implements Filterable 
     public Filter getFilter(){
 
         if(filter == null){
-            filter = new clientFilter();
+            filter = new spaFilter();
         }
         return filter;
     }
 
-    public class clientFilter extends Filter {
+    public class spaFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             String prefix = constraint.toString().toLowerCase();
 
             if (prefix == null || prefix.length() == 0) {
-                ArrayList<User> list = new ArrayList<User>(original);
+                ArrayList<Spa> list = new ArrayList<Spa>(original);
                 results.values = list;
                 results.count = list.size();
             } else {
-                final ArrayList<User> list = new ArrayList<User>(original);
-                final ArrayList<User> nlist = new ArrayList<User>();
+                final ArrayList<Spa> list = new ArrayList<Spa>(original);
+                final ArrayList<Spa> nlist = new ArrayList<Spa>();
                 int count = list.size();
 
                 for (int i = 0; i < count; i++) {
-                    final User User = list.get(i);
-                    //final String value = User.getName().toLowerCase();
-                    final String value = "";
+                    final Spa spa = list.get(i);
+                    final String value = spa.getCompanyName().toLowerCase();
+
                     if (value.contains(prefix)) {
-                        nlist.add(User);
+                        nlist.add(spa);
                     }
                     results.values = nlist;
                     results.count = nlist.size();
@@ -80,7 +81,7 @@ public class UserCustomAdapter extends ArrayAdapter<User> implements Filterable 
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            fitems = (ArrayList<User>) results.values;
+            fitems = (ArrayList<Spa>) results.values;
             notifyDataSetChanged();
             clear();
             int count = fitems.size();

@@ -15,11 +15,11 @@ public class TokenResponse {
     private Meta meta;
 
     @SerializedName("data")
-    private User user;
+    private User data;
 
-    public User getUser() { return user; }
+    public User getData() { return data; }
 
-    public void setUser(User user) { this.user = user; }
+    public void setData(User user) { this.data = data; }
 
     public String getToken() { return meta.getToken(); }
 
