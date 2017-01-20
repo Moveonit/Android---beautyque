@@ -16,6 +16,7 @@
     <string name="Creating_account">Creating Account...</string>
     <string name="emailExist">Email already registered</string>
     <string name="facebook_app_id" translatable="false">170662183378783</string>
+    <string name="google_geo_api_key" translatable="false">AIzaSyAqtG2tYOcq_GmOZIpGjCaTs0EXya0fGa8</string>
     <string name="LoginFailed">Login failed</string>
     <string name="loginProgressDialog">Login. Please wait...</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
